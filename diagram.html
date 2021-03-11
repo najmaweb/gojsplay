@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <script src="assets/go-debug.js"></script>
+    </head>
+    <body>
+        <h1>GoJS</h1>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+        </ul>
+
+        <div id="myDiagramDiv" style="width: 700px;height: 700px; background-color: #DAE4E4;"></div>
+        <script>
+            var $ = go.GraphObject.make;
+            var myDiagram = $(go.Diagram,"myDiagramDiv",
+            {
+                "undoManager.isEnabled":true
+            });
+            var node1 = 
+            $(go.Node,"Auto",
+                $(go.Shape,{figure:"RoundedRectangle",fill:"LightBlue"}),
+                $(go.TextBlock,{text:"Sangat Cepat",margin:15})
+            )
+            myDiagram.add(node1);
+            var node2 = 
+            $(go.Node,"Auto",
+                $(go.Shape,{figure:"RoundedRectangle",fill:"LightBlue"}),
+                $(go.TextBlock,{text:"Telkom",margin:15})
+            )
+            myDiagram.add(node2);
+            myDiagram.add(
+                $(go.Link,{fromNode:node1,toNode:node2},$(go.Shape))
+            )
+        </script>
+    </body>
+</html>

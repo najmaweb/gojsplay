@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <script src="assets/go-debug.js"></script>
+    </head>
+    <body>
+        <h1>GoJS</h1>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+        </ul>
+
+        <div id="myDiagramDiv" style="width: 700px;height: 700px; background-color: #DAE4E4;"></div>
+        <script>
+            var $ = go.GraphObject.make;
+            var myShape = $(go.Shape,{figure:"RoundedRectangle",fill:"lightgreen"})
+            var myDiagram = $(go.Diagram,"myDiagramDiv",
+            {
+                "undoManager.isEnabled":true
+            });
+            var myModel = $(go.Model);
+            myModel.nodeDataArray = [
+                {key:"Alpha"},
+                {key:"Beta"},
+                {key:"Gamma"}
+            ]
+            myShape.model = myModel
+//            myDiagram.model = myModel;
+        </script>
+    </body>
+</html>

@@ -1,0 +1,64 @@
+<html>
+    <head>
+        <script src="assets/go-debug.js"></script>
+        <input type="text" id="search">
+        <button id="btnSearch">FInd</button>
+    </head>
+    <body>
+        <h1>GoJS</h1>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+        </ul>
+
+        <div id="myDiagramDiv" style="width: 700px;height: 700px; background-color: #DAE4E4;"></div>
+        <script>
+            var $ = go.GraphObject.make;
+            var myDiagram = $(go.Diagram,"myDiagramDiv",
+            {
+                "undoManager.isEnabled":true
+            });
+
+            myDiagram.nodeTemplate = 
+            $(go.Node,"Auto",
+                $(go.Shape,{figure:"RoundedRectangle",fill:"LightBlue"}, new go.Binding("fill","color")),
+                $(go.TextBlock,{margin:15},new go.Binding("text","key"))
+            )
+            var nodeDataArray = [
+                {key:"Trinity",color:"Red"},
+                {key:"Precet",color:"Red"},
+                {key:"Rahmatul Ummah",color:"Red"},
+                {key:"Morpheus",color:"Red"},
+                {key:"AP Trinity Timur",color:"Green"},
+                {key:"AP Trinity Barat",color:"Green"},
+                {key:"AP Trinity Tenggara",color:"Green"},
+                {key:"Precet Timur",color:"Green"},
+                {key:"Precet Barat",color:"Green"},
+                {key:"Precet Tenggara",color:"Green"},
+            ]
+            var linkDataArray = [
+                {from:"AP Trinity Timur",to:"Trinity"},
+                {from:"AP Trinity Barat",to:"Trinity"},
+                {from:"AP Trinity Tenggara",to:"Trinity"},
+                {from:"Precet Timur",to:"Precet"},
+                {from:"Precet Barat",to:"Precet"},
+                {from:"Precet Tenggara",to:"Precet"}
+            ]
+            myDiagram.model = new go.GraphLinksModel(nodeDataArray,linkDataArray);
+        </script>
+        <script>
+            let search = document.getElementById("btnSearch");
+            search.addEventListener("click",function(){
+                console.log("Searching ...");
+                let searchKey =  document.getElementById("search");
+                let data = myDiagram.model.findNodeDataForKey(searchKey.value);
+                if(data!==null){
+                    console.log("Data Found",data);
+                    data.color = "gold";
+                    myDiagram.model.setDataProperty(data,"color","blue");
+                }else{
+                    console.log("Data ",searchKey.value,"not found");
+                }
+            })
+        </script>
+    </body>
+</html>

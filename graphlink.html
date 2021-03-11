@@ -1,0 +1,64 @@
+<html>
+    <head>
+        <script src="assets/go-debug.js"></script>
+    </head>
+    <body>
+        <h1>GoJS</h1>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+        </ul>
+
+        <div id="myDiagramDiv" style="width: 700px;height: 700px; background-color: #DAE4E4;"></div>
+        <script>
+            var $ = go.GraphObject.make;
+            var myDiagram = $(go.Diagram,"myDiagramDiv",
+            {
+                "undoManager.isEnabled":true
+            });
+            myDiagram.model = new go.GraphLinksModel([{key:"Seraph"},{key:"Precet"}],[{from:"Seraph",to:"Precet"}]);
+            var node = new go.Node(go.Panel.Auto);
+            var shape = new go.Shape();
+            shape.figure = "circle";
+            shape.fill = "lightblue";
+            var textblock = new go.TextBlock();
+            textblock.text = "Telkom";
+            textblock.margin = 15;
+            node.add(shape);
+            node.add(textblock);
+            myDiagram.add(node);
+
+            myDiagram.add(
+                $(go.Node,go.Panel.Auto,
+                    $(go.Shape,{
+                        figure:"RoundedRectangle",
+                        fill:"lightblue"
+                    }),
+                    $(go.TextBlock,{
+                        text:"Indosat",
+                        margin:25
+                    })
+                )
+            )
+
+            myDiagram.add(
+                $(go.Node,"Auto",
+                    $(go.Shape,"Circle",{fill:"red"}),
+                    $(go.TextBlock,"Lintas Artha",{margin:5})
+                )
+            )
+
+            myDiagram.add(
+                $(go.Node,"Auto",
+                    $(go.Shape,"Circle",
+                        {
+                            fill:$(go.Brush,"Linear",{0.0:"Violet",0.1:"Lavender"})
+                        }
+                    ),
+                    $(go.TextBlock,"SangatCepat",{margin:2})
+                
+                )
+            )
+
+        </script>
+    </body>
+</html>
