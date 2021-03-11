@@ -20,7 +20,7 @@
 
             myDiagram.nodeTemplate = 
             $(go.Node,"Auto",
-                $(go.Shape,{figure:"RoundedRectangle",fill:"LightBlue"}, new go.Binding("fill","color")),
+                $(go.Shape,{figure:"circle",fill:"LightBlue"}, new go.Binding("fill","color")),
                 $(go.TextBlock,{margin:15},new go.Binding("text","key"))
             )
             var nodeDataArray = [
@@ -44,6 +44,11 @@
                 {from:"Precet Tenggara",to:"Precet"}
             ]
             myDiagram.model = new go.GraphLinksModel(nodeDataArray,linkDataArray);
+            myDiagram.layout = new go.ForceDirectedLayout();
+            myDiagram.layout = new go.GridLayout();
+            myDiagram.layout = new go.TreeLayout();
+            myDiagram.layout = new go.CircularLayout();
+            myDiagram.layout = new go.LayeredDigraphLayout();
         </script>
         <script>
             let search = document.getElementById("btnSearch");
