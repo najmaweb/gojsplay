@@ -10,9 +10,12 @@
         <ul>
             <li><a href="index.html">Home</a></li>
         </ul>
-
-        <div id="myDiagramDiv" style="width: 700px;height: 700px; background-color: #DAE4E4;"></div>
+        <button id="btnzoomin">Zoom In</button>
+        <button id="btnzoomout">Zoom Out</button>
+        <button id="btnzoomfit">Zoom To Fit</button>
+        <div id="myDiagramDiv" style="width: 1200;height: 700px; background-color: #DAE4E4;"></div>
         <script>
+            document.getElementById('myDiagramDiv').setAttribute('width',screen.width);
             let nodeDataArray = [];
             getBts = function(callback){
                 $.ajax({
@@ -60,9 +63,10 @@
             var $$ = go.GraphObject.make;
             var myDiagram = $$(go.Diagram,"myDiagramDiv",
             {
-                "undoManager.isEnabled":true
+                "undoManager.isEnabled":true,
+                layout:$$(go.CircularLayout)
             });
-
+            myDiagram.layout = new go.ForceDirectedLayout();
             myDiagram.nodeTemplate = 
             $$(go.Node,"Auto",
                 $$(go.Shape,{figure:"circle",fill:"LightBlue"}, new go.Binding("fill","color")),
@@ -76,11 +80,23 @@
                 linkDataArray = rel
                 console.log("Rel",rel)
                 myDiagram.model = new go.GraphLinksModel(nodeDataArray,linkDataArray);
-                myDiagram.layout = new go.ForceDirectedLayout();
                 myDiagram.layout = new go.GridLayout();
                 myDiagram.layout = new go.TreeLayout();
                 myDiagram.layout = new go.CircularLayout();
                 myDiagram.layout = new go.LayeredDigraphLayout();
+                myDiagram.layout = new go.ForceDirectedLayout();
+            })
+            document.getElementById('btnzoomin').addEventListener('click',function(){
+                console.log("zoomin clicked");
+                myDiagram.commandHandler.increaseZoom();
+            })
+            document.getElementById('btnzoomout').addEventListener('click',function(){
+                console.log("zoomout clicked");
+                myDiagram.commandHandler.decreaseZoom();
+            })
+            document.getElementById('btnzoomfit').addEventListener('click',function(){
+                console.log("zoomout clicked");
+                myDiagram.commandHandler.zoomToFit();
             })
         </script>
         <script>
