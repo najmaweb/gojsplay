@@ -1,0 +1,102 @@
+<html>
+    <head>
+        <script src="assets/go-debug.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <input type="text" id="search">
+        <button id="btnSearch">FInd</button>
+    </head>
+    <body>
+        <h1>GoJS</h1>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+        </ul>
+
+        <div id="myDiagramDiv" style="width: 700px;height: 700px; background-color: #DAE4E4;"></div>
+        <script>
+            let nodeDataArray = [];
+            getBts = function(callback){
+                $.ajax({
+                    url:'http://localhost:2103/getbtses',
+                    type:'get'
+                })
+                .done(function(btses){
+                    $.ajax({
+                        url:'http://localhost:2103/getaps',
+                        type:'get'
+                    })
+                    .done(function(aps){
+                        $.ajax({
+                            url:'http://localhost:2103/getapbtsrelations',
+                            type:'get'
+                        })
+                        .done(function(rel){
+                            console.log("Rel retrieved",rel)
+                            console.log('Btses',btses);
+                            callback(btses.map(function(x){
+                                return {key:x.name,color:"red"}
+                            }).concat(aps.map(function(y){
+                                return {key:y.name,color:"blue"}
+                            })),rel.map(z=>{
+                                return {from:z.bts,to:z.ap}
+                            }))
+
+                        })
+                        .fail(err=>{
+                            console.log("Error get relation",err)
+                        })
+                    })
+                    .fail(function(err){
+                        console.log("Err retrieve APs",err)
+                    })
+                })
+                .fail(function(err){
+                    console.log('Error retrieve btses',err);
+                    callback({err:err})
+                });
+            }
+
+        </script>
+        <script>
+            var $$ = go.GraphObject.make;
+            var myDiagram = $$(go.Diagram,"myDiagramDiv",
+            {
+                "undoManager.isEnabled":true
+            });
+
+            myDiagram.nodeTemplate = 
+            $$(go.Node,"Auto",
+                $$(go.Shape,{figure:"circle",fill:"LightBlue"}, new go.Binding("fill","color")),
+                $$(go.TextBlock,{margin:15},new go.Binding("text","key"))
+            )
+            var childNodeDataArray = [
+                {key:"AP Trinity Timur",color:"green"}
+            ]
+            getBts(function(bts,rel){
+                nodeDataArray = bts
+                linkDataArray = rel
+                console.log("Rel",rel)
+                myDiagram.model = new go.GraphLinksModel(nodeDataArray,linkDataArray);
+                myDiagram.layout = new go.ForceDirectedLayout();
+                myDiagram.layout = new go.GridLayout();
+                myDiagram.layout = new go.TreeLayout();
+                myDiagram.layout = new go.CircularLayout();
+                myDiagram.layout = new go.LayeredDigraphLayout();
+            })
+        </script>
+        <script>
+            let search = document.getElementById("btnSearch");
+            search.addEventListener("click",function(){
+                console.log("Searching ...");
+                let searchKey =  document.getElementById("search");
+                let data = myDiagram.model.findNodeDataForKey(searchKey.value);
+                if(data!==null){
+                    console.log("Data Found",data);
+                    data.color = "gold";
+                    myDiagram.model.setDataProperty(data,"color","blue");
+                }else{
+                    console.log("Data ",searchKey.value,"not found");
+                }
+            })
+        </script>
+    </body>
+</html>
