@@ -71,7 +71,23 @@
             $$(go.Node,"Spot",{isTreeExpanded:false,isTreeLeaf:false},
                 $$(go.Shape,{figure:"circle",fill:"LightBlue"}, new go.Binding("fill","color")),
                 $$(go.TextBlock,{margin:15},new go.Binding("text","key")),
-                $$("TreeExpanderButton")
+                $$("TreeExpanderButton"),
+            $$("TreeExpanderButton",
+            {
+              name: 'TREEBUTTON',
+              width: 20, height: 20,
+              alignment: go.Spot.TopRight,
+              alignmentFocus: go.Spot.Center,
+              // customize the expander behavior to
+              // create children if the node has never been expanded
+              click: function(e, obj) {  // OBJ is the Button
+                var node = obj.part;  // get the Node containing this Button
+                if (node === null) return;
+                e.handled = true;
+                expandNode(node);
+              }
+            }
+          ) 
             )
             var childNodeDataArray = [
                 {key:"AP Trinity Timur",color:"green"}
@@ -114,6 +130,68 @@
                     console.log("Data ",searchKey.value,"not found");
                 }
             })
+
+            function expandNode(node) {
+                var diagram = node.diagram;
+                diagram.startTransaction("CollapseExpandTree");
+                // this behavior is specific to this incrementalTree sample:
+                var data = node.data;
+                if (!data.everExpanded) {
+                    // only create children once per node
+                    diagram.model.setDataProperty(data, "everExpanded", true);
+                    var numchildren = createSubTree(data);
+                    if (numchildren === 0) {  // now known no children: don't need Button!
+                    node.findObject('TREEBUTTON').visible = false;
+                    }
+                }
+                // this behavior is generic for most expand/collapse tree buttons:
+                if (node.isTreeExpanded) {
+                    diagram.commandHandler.collapseTree(node);
+                } else {
+                    diagram.commandHandler.expandTree(node);
+                }
+                diagram.commitTransaction("CollapseExpandTree");
+                myDiagram.zoomToFit();
+            }
+            function createSubTree(parentdata) {
+      var numchildren = Math.floor(Math.random() * 10);
+      if (myDiagram.nodes.count <= 1) {
+        numchildren += 1;  // make sure the root node has at least one child
+      }
+      // create several node data objects and add them to the model
+      var model = myDiagram.model;
+      var parent = myDiagram.findNodeForData(parentdata);
+
+      var degrees = 1;
+      var grandparent = parent.findTreeParentNode();
+      while (grandparent) {
+        degrees++;
+        grandparent = grandparent.findTreeParentNode();
+      }
+
+      for (var i = 0; i < numchildren; i++) {
+        var childdata = {
+          key: model.nodeDataArray.length,
+          parent: parentdata.key,
+          rootdistance: degrees
+        };
+        // add to model.nodeDataArray and create a Node
+        model.addNodeData(childdata);
+        // position the new child node close to the parent
+        var child = myDiagram.findNodeForData(childdata);
+        child.location = parent.location;
+      }
+      return numchildren;
+    }
+
+    function expandAtRandom() {
+      var eligibleNodes = [];
+      myDiagram.nodes.each(function(n) {
+        if (!n.isTreeExpanded) eligibleNodes.push(n);
+      })
+      var node = eligibleNodes[Math.floor(Math.random() * (eligibleNodes.length))];
+      expandNode(node);
+    }
         </script>
     </body>
 </html>
